@@ -1,33 +1,25 @@
 <?php
 
+interface ContainerInterface
+{
+	public function get(string $abstract, $concrete);
 
-class Container
+	public function has($id);
+}
+
+class Container implements ContainerInterface
 {
 
-	/**
-	 * @var array
-	 */
 	protected $instances = [];
 
-	/**
-	 * @param      $abstract
-	 * @param null $concrete
-	 */
-	public function set($abstract, $concrete = NULL)
+	public function set($abstract, $concentrate = NULL)
 	{
-		if ($concrete === NULL) {
-			$concrete = $abstract;
+		if ($concentrate === NULL) {
+			$concentrate = $abstract;
 		}
-		$this->instances[$abstract] = $concrete;
+		$this->instances[$abstract] = $concentrate;
 	}
 
-	/**
-	 * @param       $abstract
-	 * @param array $parameters
-	 *
-	 * @return mixed|null|object
-	 * @throws Exception
-	 */
 	public function get($abstract, $parameters = [])
 	{
 		if (!isset($this->instances[$abstract])) {
@@ -36,15 +28,6 @@ class Container
 		return $this->resolve($this->instances[$abstract], $parameters);
 	}
 
-	/**
-	 * resolve single
-	 *
-	 * @param $concrete
-	 * @param $parameters
-	 *
-	 * @return mixed|object
-	 * @throws Exception
-	 */
 	public function resolve($concrete, $parameters)
 	{
 		if ($concrete instanceof Closure) {
@@ -63,17 +46,16 @@ class Container
 
 		$parameters   = $constructor->getParameters();
 		$dependencies = $this->getDependencies($parameters);
+
 		return $reflector->newInstanceArgs($dependencies);
 	}
 
-	/**
-	 * get all dependencies resolved
-	 *
-	 * @param $parameters
-	 *
-	 * @return array
-	 * @throws Exception
-	 */
+	public function has($id)
+	{
+		return $this->bound($id);
+	}
+
+
 	public function getDependencies($parameters)
 	{
 		$dependencies = [];
@@ -91,6 +73,11 @@ class Container
 		}
 		return $dependencies;
 	}
+
+	private function bound($abstract)
+	{
+		return isset($this->instances[$abstract]);
+	}
 }
 
 class Profile {
@@ -105,5 +92,6 @@ class Setting {}
 
 
 $construct = new Container;
-$construct->set('Profile');
-$contain = $construct->get('Profile');
+$construct->set('Oke');
+$contain = $construct->get('Oke');
+var_dump($contain);
